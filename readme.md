@@ -631,15 +631,58 @@ parking_business/
 ├── pricing.py
 ├── data_manager.py
 │
+├── test_user_manager.py
+├── test_pricing.py
 └── test_parking_cycle.py
 ```
 
 
+
+
+
 ## Testing
 
-The project includes a comprehensive parking regression test suite covering the main business rules.
+The project includes separate test modules for different parts of the application, together with a comprehensive parking regression test suite.
 
-The final regression suite contains 13 tests:
+### User Manager Tests
+
+`test_user_manager.py` covers user-management behavior, including:
+
+- Adding users
+
+- User ID generation
+
+- User search
+
+- Duplicate registration-number prevention
+
+- User retrieval
+
+- User deletion and related validation
+
+
+### Pricing Tests
+
+`test_pricing.py` covers the parking pricing logic, including:
+
+- Unbooked parking charges
+
+- Booked parking charges
+
+- Different booking-duration rates
+
+- Overtime charges
+
+- Weekend discount
+
+- Pricing calculations and breakdowns
+
+
+### Parking Regression Tests
+
+`test_parking_cycle.py` contains the comprehensive parking-cycle regression suite.
+
+The suite covers 13 scenarios:
 
 1. Booked parking
 
@@ -668,24 +711,11 @@ The final regression suite contains 13 tests:
 13. Parking ID format
 
 
-The final regression run passed all 13 tests.
+The regression tests verify the interaction between parking allocation, booking, pricing, parking sessions, and physical space occupancy.
+
+The final parking regression run passed all 13 scenarios.
 
 
-### Example
-
-```text
-TEST RESULT
-----------------------------------------
-Test passed
-Overtime is calculated from booking end,
-not from grace-period end.
-
-Expected overtime: 5 minutes
-Actual overtime:   5 minutes
-
-Expected cost: Kr 145.00
-Actual cost:   Kr 145.00
-```
 
 
 ## Technologies
