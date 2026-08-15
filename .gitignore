@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+
+users.json
+parking_history.json
+temp_parking_data.json
