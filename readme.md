@@ -236,6 +236,7 @@ Application Menu
 
 The application provides a command-line interface:
 
+```text
 ============================================================
                 PARKING BUSINESS MANAGER
 ============================================================
@@ -251,6 +252,7 @@ The application provides a command-line interface:
 8. View parking history
 9. Delete user
 10. Exit
+```
 
 The menu provides access to the main user and parking workflows while the underlying classes handle the business rules.
 
