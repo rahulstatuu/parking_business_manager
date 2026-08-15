@@ -11,11 +11,11 @@ The interface is simple by design. The business rules behind each parking decisi
 
 The parking facility contains 60 underground parking spaces across three floors:
 
-- **G1:** p1–p20
+- **G1:** P1–P20
 
-- **G2:** p21–p40
+- **G2:** P21–P40
 
-- **G3:** p41–p60
+- **G3:** P41–P60
 
 - **Total spaces:** 60
 
@@ -27,20 +27,20 @@ The parking facility contains 60 underground parking spaces across three floors:
 
 - **Equal-distance pairs:** 30
 
-- **Lowest floor:** g3
+- **Lowest floor:** G3
 
 
 Spaces are organized into equal-distance pairs:
 
-- p1 / p2
+- P1 / P2
 
-- p3 / p4
+- P3 / P4
 
-- p5 / p6
+- P5 / P6
 
 - ...
 
-- p59 / p60
+- P59 / P60
 
 
 When more than one eligible space belongs to the same distance pair, the system can randomly select between them.
@@ -78,7 +78,7 @@ The allocation logic considers:
 
   - Long-stay bookings prioritize lower floors.
 
-  - g3 is the lowest floor and therefore receives priority for applicable long bookings.
+  - G3 is the lowest floor and therefore receives priority for applicable long bookings.
 
 
 - **Distance pairs**
@@ -194,27 +194,37 @@ Booking ends:     2026-08-14 04:00:00
 
 ## Exit and Grace Period Rules
 
-The system distinguishes between booked and unbooked parking.
+The system applies a **two-minute grace period** to parking sessions.
+
+The grace period is handled differently depending on whether the parking was booked or unbooked.
 
 
 ### Booked parking
 
-- Exiting exactly at the booking end produces no overtime.
+- The booking ends at the exact time calculated from the booking start time and booked hours.
 
-- A two-minute grace period is allowed after the booking ends.
+- The driver has a **two-minute grace period after the booking end time** to leave the parking facility.
 
-- Exiting within the grace period produces no overtime charge.
+- If the vehicle exits **at the booking end time or within the following two minutes**, no overtime charge is applied.
 
-- Overtime is calculated from the original booking end time.
+- If the vehicle exits **after the two-minute grace period**, overtime is charged.
 
-- Overtime is charged separately from the booked parking charge.
+- Overtime is calculated from the **original booking end time**, not from the end of the grace period.
+
+- For example, if the booking ends at `04:00`, the driver can leave by `04:02` without an overtime charge. An exit at `04:05` produces **5 minutes of overtime**, not 3 minutes.
+
+- The grace period does not extend the booked time. It only determines whether an overtime charge is applied.
 
 
 ### Unbooked parking
 
-- The first two minutes are free.
+- The first **two minutes after vehicle entry are free**.
 
-- Remaining billable time is calculated using the configured parking pulse.
+- If the vehicle exits within the first two minutes, the parking cost is `Kr 0.00`.
+
+- After the first two minutes, the remaining parking time becomes billable according to the configured parking pulse.
+
+- The two-minute free period is therefore applied before calculating the billable duration.
 
 
 ## Pricing
@@ -637,12 +647,10 @@ parking_business/
 ```
 
 
-
-
-
 ## Testing
 
 The project includes separate test modules for different parts of the application, together with a comprehensive parking regression test suite.
+
 
 ### User Manager Tests
 
@@ -711,11 +719,70 @@ The suite covers 13 scenarios:
 13. Parking ID format
 
 
-The regression tests verify the interaction between parking allocation, booking, pricing, parking sessions, and physical space occupancy.
-
 The final parking regression run passed all 13 scenarios.
 
 
+### Example
+
+The following regression test demonstrates a booked parking session with overtime.
+
+```text
+## TEST 4 - BOOKED PARKING WITH OVERTIME
+----------------------------------------
+
+Would you like to book a parking time?
+1. Yes
+2. No
+
+Parking confirmed
+Parking ID:       u0001-20260813-59
+Parking space:    p18
+In time:          2026-08-13 23:00:00
+Booking starts:   2026-08-13 23:00:00
+Booked hours:     5
+Booking ends:     2026-08-14 04:00:00
+
+Parking completed
+Parking ID: u0001-20260813-59
+Parking space: p18
+In time: 2026-08-13 23:00:00
+Booking: 5 hours
+Booking ends: 2026-08-14 04:00:00
+Out time: 2026-08-14 04:05:00
+Duration: 305 minutes
+Total cost: Kr 145.00
+
+## TEST RESULT
+----------------------------------------
+Test passed
+Overtime is calculated from booking end, not from grace-period end.
+
+Expected duration: 305 minutes
+Actual duration:   305 minutes
+
+Expected overtime: 5 minutes
+Actual overtime:   5 minutes
+
+Expected cost: Kr 145.00
+Actual cost:   Kr 145.00
+```
+
+
+This test demonstrates that:
+
+- The vehicle was booked for **5 hours**.
+
+- The booked parking rate was **Kr 25/hour** because the booking exceeded 4 hours.
+
+- The booked parking charge was therefore **5 × Kr 25 = Kr 125**.
+
+- The vehicle exited **5 minutes after the booking ended**.
+
+- The two-minute grace period did not eliminate the overtime because the vehicle stayed beyond the grace period.
+
+- The **5 overtime minutes** were calculated from the original booking end time.
+
+- The final cost was **Kr 145**, consisting of the booked parking charge plus the applicable overtime charge.
 
 
 ## Technologies
