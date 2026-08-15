@@ -1,4 +1,4 @@
-PARKING BUSINESS MANAGER
+# PARKING BUSINESS MANAGER
 
 A Python-based parking facility management system that models the operation of a 60-space underground parking facility.
 
@@ -6,166 +6,182 @@ The application handles user registration, parking allocation, booking, EV requi
 
 The interface is simple by design. The business rules behind each parking decision are handled by separate Python classes.
 
-Facility Overview
+
+## Facility Overview
 
 The parking facility contains 60 underground parking spaces across three floors:
 
-G1: P1–P20
+- **G1:** p1–p20
 
-G2: P21–P40
+- **G2:** p21–p40
 
-G3: P41–P60
+- **G3:** p41–p60
 
-Total spaces: 60
+- **Total spaces:** 60
 
-EV spaces: 12
+- **EV spaces:** 12
 
-Non-EV spaces: 48
+- **Non-EV spaces:** 48
 
-Larger corner spaces: 12
+- **Larger corner spaces:** 12
 
-Equal-distance pairs: 30
+- **Equal-distance pairs:** 30
 
-Lowest floor: G3
+- **Lowest floor:** g3
+
 
 Spaces are organized into equal-distance pairs:
 
-P1 / P2
+- p1 / p2
 
-P3 / P4
+- p3 / p4
 
-P5 / P6
+- p5 / p6
 
-...
+- ...
 
-P59 / P60
+- p59 / p60
+
 
 When more than one eligible space belongs to the same distance pair, the system can randomly select between them.
 
-Parking Allocation Rules
+
+## Parking Allocation Rules
 
 The system does not simply assign the first available space. It evaluates several conditions before confirming a parking space.
 
 The allocation logic considers:
 
-Vehicle type
+- **Vehicle type**
 
-EV vehicles are offered suitable EV spaces first.
+  - EV vehicles are offered suitable EV spaces first.
 
-If no suitable EV space is available, a suitable non-EV fallback can be offered.
+  - If no suitable EV space is available, a suitable non-EV fallback can be offered.
 
-The EV driver must accept the fallback space.
+  - The EV driver must accept the fallback space.
 
-Refusing the fallback cancels the parking session.
+  - Refusing the fallback cancels the parking session.
 
-Vehicle width
 
-Vehicle width is checked before assigning a space.
+- **Vehicle width**
 
-Vehicles wider than 175 cm receive special allocation consideration.
+  - Vehicle width is checked before assigning a space.
 
-Suitable corner spaces are considered for wider vehicles.
+  - Vehicles wider than 175 cm receive special allocation consideration.
 
-Booking duration
+  - Suitable corner spaces are considered for wider vehicles.
 
-Longer bookings receive different allocation priority.
 
-Long-stay bookings prioritize lower floors.
+- **Booking duration**
 
-G3 is the lowest floor and therefore receives priority for applicable long bookings.
+  - Longer bookings receive different allocation priority.
 
-Distance pairs
+  - Long-stay bookings prioritize lower floors.
 
-Spaces are grouped into equal-distance pairs.
+  - g3 is the lowest floor and therefore receives priority for applicable long bookings.
 
-The system selects from eligible spaces rather than always taking the same space.
 
-Availability
+- **Distance pairs**
 
-Occupied spaces are excluded.
+  - Spaces are grouped into equal-distance pairs.
 
-If no suitable space exists, no parking session is created.
+  - The system selects from eligible spaces rather than always taking the same space.
 
-Business Rules and Validation
+
+- **Availability**
+
+  - Occupied spaces are excluded.
+
+  - If no suitable space exists, no parking session is created.
+
+
+## Business Rules and Validation
 
 The system contains checks to prevent inconsistent parking and user data.
 
-User-related checks
 
-Registration numbers cannot be registered twice.
+### User-related checks
 
-User IDs are generated automatically.
+- Registration numbers cannot be registered twice.
 
-Users can be searched by:
+- User IDs are generated automatically.
 
-User ID
+- Users can be searched by:
 
-Car model
+  - User ID
 
-Registration number
+  - Car model
 
-Driver cell
+  - Registration number
 
-Searches support partial matching.
+  - Driver cell
 
-Searches are case-insensitive.
+- Searches support partial matching.
 
-Invalid user IDs are rejected.
+- Searches are case-insensitive.
 
-A currently parked user cannot be deleted.
+- Invalid user IDs are rejected.
 
-Parking-related checks
+- A currently parked user cannot be deleted.
 
-A user cannot have two active parking sessions at the same time.
 
-A parking session is not created without a suitable space.
+### Parking-related checks
 
-An EV driver must accept a non-EV fallback space.
+- A user cannot have two active parking sessions at the same time.
 
-Refusing an EV fallback does not create an active session.
+- A parking session is not created without a suitable space.
 
-Invalid booking choices are rejected.
+- An EV driver must accept a non-EV fallback space.
 
-Invalid or non-positive booking durations are rejected.
+- Refusing an EV fallback does not create an active session.
 
-Parking spaces are released after a vehicle exits.
+- Invalid booking choices are rejected.
 
-A completed parking session is removed from active parking.
+- Invalid or non-positive booking durations are rejected.
 
-A user can exit parking using their user ID rather than remembering the parking ID.
+- Parking spaces are released after a vehicle exits.
 
-Booking and Parking Sessions
+- A completed parking session is removed from active parking.
+
+- A user can exit parking using their user ID rather than remembering the parking ID.
+
+
+## Booking and Parking Sessions
 
 A driver can choose between:
 
-Book a parking time
+1. Book a parking time
 
-Park without a booking
+2. Park without a booking
+
 
 For booked parking, the system records:
 
-In time
+- In time
 
-Booking start
+- Booking start
 
-Booked hours
+- Booked hours
 
-Booking end
+- Booking end
 
-Out time
+- Out time
 
-Actual duration
+- Actual duration
 
-Overtime, if applicable
+- Overtime, if applicable
 
-Final cost
+- Final cost
 
-Pricing breakdown
+- Pricing breakdown
+
 
 The booking starts at the same time as vehicle entry.
 
-Example:
 
+### Example
+
+```text
 Parking confirmed
 Parking ID:       u0001-20260813-57
 Parking space:    p18
@@ -173,113 +189,118 @@ In time:          2026-08-13 23:00:00
 Booking starts:   2026-08-13 23:00:00
 Booked hours:     5
 Booking ends:     2026-08-14 04:00:00
+```
 
-Exit and Grace Period Rules
+
+## Exit and Grace Period Rules
 
 The system distinguishes between booked and unbooked parking.
 
-Booked parking
 
-Exiting exactly at the booking end produces no overtime.
+### Booked parking
 
-A two-minute grace period is allowed after the booking ends.
+- Exiting exactly at the booking end produces no overtime.
 
-Exiting within the grace period produces no overtime charge.
+- A two-minute grace period is allowed after the booking ends.
 
-Overtime is calculated from the original booking end time.
+- Exiting within the grace period produces no overtime charge.
 
-Overtime is charged separately from the booked parking charge.
+- Overtime is calculated from the original booking end time.
 
-Unbooked parking
+- Overtime is charged separately from the booked parking charge.
 
-The first two minutes are free.
 
-Remaining billable time is calculated using the configured parking pulse.
+### Unbooked parking
 
-Pricing
+- The first two minutes are free.
+
+- Remaining billable time is calculated using the configured parking pulse.
+
+
+## Pricing
 
 Pricing is isolated in the Pricing class.
 
-Current pricing configuration:
 
-Parking type
+### Current pricing configuration
 
-Rule
+| Parking type | Rule |
+|---|---|
+| Unbooked | Kr 40/hour |
+| Booked ≤ 4 hours | Kr 30/hour |
+| Booked > 4 hours | Kr 25/hour |
+| Unbooked billing pulse | 30 minutes |
+| Weekend discount | 50% |
 
-Unbooked
-
-Kr 40/hour
-
-Booked ≤ 4 hours
-
-Kr 30/hour
-
-Booked > 4 hours
-
-Kr 25/hour
-
-Unbooked billing pulse
-
-30 minutes
-
-Weekend discount
-
-50%
 
 The pricing system also produces a breakdown containing information such as:
 
-Parking type
+- Parking type
 
-Applied rate
+- Applied rate
 
-Number of pulses
+- Number of pulses
 
-Booked hours
+- Booked hours
 
-Weekend status
+- Weekend status
 
-Discount
+- Discount
 
-Charge before discount
+- Charge before discount
 
-Overtime charge
+- Overtime charge
 
-Final total
+- Final total
+
 
 Completed parking records retain their pricing breakdown so that historical charges do not depend on future price changes.
 
-Persistent Active Parking
+
+## Persistent Active Parking
 
 The system separates current parking state from completed parking history.
 
 Three JSON files are used:
 
+```text
 users.json
     ↓
 Registered users
+```
 
+```text
 temp_parking_data.json
     ↓
 Currently active parking sessions
+```
 
+```text
 parking_history.json
     ↓
 Completed parking sessions
+```
 
-How active parking persistence works
+
+### How active parking persistence works
 
 When a vehicle enters:
 
+```text
 ParkingSession created
         ↓
 active_sessions updated
         ↓
 temp_parking_data.json saved
+```
 
-If the application closes while a vehicle is still parked, the active session remains in temp_parking_data.json.
+
+If the application closes while a vehicle is still parked, the active session remains in `temp_parking_data.json`.
+
 
 When the application starts again:
 
+```text
 ParkingManager starts
         ↓
 Load active sessions
@@ -289,62 +310,72 @@ Recreate ParkingSession objects
 Restore active_sessions
         ↓
 Restore occupied parking spaces
+```
+
 
 Restoring the physical space is important. Otherwise, the system could restore the parking session while incorrectly showing its parking space as available.
 
+
 When the final active session ends:
 
+```text
 active_sessions becomes empty
         ↓
 temp_parking_data.json is removed
+```
+
 
 This allows the application to recover its current operational state after a program restart.
 
-Parking History
+
+## Parking History
 
 Completed parking sessions are stored in:
 
-parking_history.json
+`parking_history.json`
+
 
 A completed record contains information such as:
 
-Parking ID
+- Parking ID
 
-User ID
+- User ID
 
-Parking type
+- Parking type
 
-Parking space
+- Parking space
 
-In time
+- In time
 
-Out time
+- Out time
 
-Booking information
+- Booking information
 
-Actual duration
+- Actual duration
 
-Pricing breakdown
+- Pricing breakdown
 
-Final cost
+- Final cost
+
 
 The application can display history for:
 
-All users
+- All users
 
-An individual user
+- An individual user
 
-All available records
+- All available records
 
-Today
+- Today
 
-Last 7 days
+- Last 7 days
 
-Last 30 days
+- Last 30 days
 
-A custom date range
+- A custom date range
 
-Application Menu
+
+## Application Menu
 
 The application provides a command-line interface:
 
@@ -364,213 +395,229 @@ The application provides a command-line interface:
 10. Exit
 ```
 
+
 The menu provides access to the main user and parking workflows while the underlying classes handle the business rules.
 
-OOP Architecture
+
+## OOP Architecture
 
 The project separates responsibilities across several classes.
 
-                    main.py
-                       │
-    ┌──────────────────┼──────────────────┐
-    │                  │                  │
-    ▼                  ▼                  ▼
+```text
+                         main.py
+                           │
+        ┌──────────────────┼──────────────────┐
+        │                  │                  │
+        ▼                  ▼                  ▼
+   UserManager      ParkingManager       DataManager
+        │                  │                  │
+        ▼                  ▼                  ▼
+      User          ParkingSession      JSON files
+                           │
+                  ┌─────────┴─────────┐
+                  ▼                   ▼
+         ParkingFacility           Pricing
+                 │
+                 ▼
+           ParkingSpace
+```
 
-UserManager      ParkingManager       DataManager
-│                  │                  │
-▼                  ▼                  ▼
-User          ParkingSession      JSON files
-│
-┌─────────┴─────────┐
-▼                   ▼
-ParkingFacility           Pricing
-│
-▼
-ParkingSpace
 
-User
+### User
 
 Represents one registered parking user.
 
 Handles:
 
-User information
+- User information
 
-Vehicle information
+- Vehicle information
 
-EV identification
+- EV identification
 
-Dictionary conversion for storage
+- Dictionary conversion for storage
 
-UserManager
+
+### UserManager
 
 Handles:
 
-Adding users
+- Adding users
 
-Generating user IDs
+- Generating user IDs
 
-Searching users
+- Searching users
 
-Retrieving all users
+- Retrieving all users
 
-Deleting users
+- Deleting users
 
-User-related validation
+- User-related validation
 
-ParkingSpace
+
+### ParkingSpace
 
 Represents one physical parking space.
 
 Stores:
 
-Space number
+- Space number
 
-Floor
+- Floor
 
-Pair number
+- Pair number
 
-EV status
+- EV status
 
-Corner status
+- Corner status
 
-Occupancy state
+- Occupancy state
 
-Current user ID
+- Current user ID
 
-ParkingFacility
+
+### ParkingFacility
 
 Creates and manages the 60 physical parking spaces.
 
 Handles:
 
-Floor assignment
+- Floor assignment
 
-EV-space assignment
+- EV-space assignment
 
-Corner-space assignment
+- Corner-space assignment
 
-Equal-distance pair assignment
+- Equal-distance pair assignment
 
-ParkingSession
+
+### ParkingSession
 
 Represents one parking session.
 
 Stores:
 
-Parking ID
+- Parking ID
 
-User ID
+- User ID
 
-Parking type
+- Parking type
 
-Parking space
+- Parking space
 
-Entry information
+- Entry information
 
-Booking information
+- Booking information
 
-Exit information
+- Exit information
 
-Duration
+- Duration
 
-Pricing information
+- Pricing information
+
 
 It also manages temporary persistence of active parking sessions.
 
-ParkingManager
+
+### ParkingManager
 
 Contains the main parking business logic.
 
 Handles:
 
-Space allocation
+- Space allocation
 
-EV allocation
+- EV allocation
 
-EV fallback
+- EV fallback
 
-Vehicle-width rules
+- Vehicle-width rules
 
-Booking
+- Booking
 
-Active parking sessions
+- Active parking sessions
 
-Parking IDs
+- Parking IDs
 
-Parking exit
+- Parking exit
 
-Space occupation and release
+- Space occupation and release
 
-Active-session persistence
+- Active-session persistence
 
-Pricing
+
+### Pricing
 
 Handles:
 
-Unbooked pricing
+- Unbooked pricing
 
-Booked pricing
+- Booked pricing
 
-Overtime pricing
+- Overtime pricing
 
-Weekend discount
+- Weekend discount
 
-Pricing breakdowns
+- Pricing breakdowns
 
-DataManager
+
+### DataManager
 
 Handles JSON storage for:
 
-users.json
+- `users.json`
 
-parking_history.json
+- `parking_history.json`
+
 
 Business logic remains outside the data-storage class.
 
-Data Flow
+
+## Data Flow
 
 A typical parking lifecycle looks like this:
 
 ```text
-
 User
-↓
+  ↓
 Start parking
-↓
+  ↓
 Check existing active session
-↓
+  ↓
 Check available spaces
-↓
+  ↓
 Evaluate vehicle type
-↓
+  ↓
 Evaluate vehicle width
-↓
+  ↓
 Evaluate booking duration
-↓
+  ↓
 Apply parking allocation rules
-↓
+  ↓
 Create ParkingSession
-↓
+  ↓
 Occupy ParkingSpace
-↓
+  ↓
 Save active session
-↓
+  ↓
 Vehicle remains parked
-↓
+  ↓
 Exit using User ID
-↓
+  ↓
 Calculate duration and price
-↓
+  ↓
 Complete ParkingSession
-↓
+  ↓
 Save parking history
-↓
+  ↓
 Release ParkingSpace
-↓
+  ↓
 Remove active session
+```
+
 
 ## Project Structure
+
 ```text
 parking_business/
 │
@@ -585,43 +632,48 @@ parking_business/
 ├── data_manager.py
 │
 └── test_parking_cycle.py
+```
 
-Testing
+
+## Testing
 
 The project includes a comprehensive parking regression test suite covering the main business rules.
 
 The final regression suite contains 13 tests:
 
-Booked parking
+1. Booked parking
 
-Exit exactly at booking end
+2. Exit exactly at booking end
 
-Exit within the two-minute grace period
+3. Exit within the two-minute grace period
 
-Booked parking with overtime
+4. Booked parking with overtime
 
-Unbooked parking
+5. Unbooked parking
 
-Unbooked parking within the first two minutes
+6. Unbooked parking within the first two minutes
 
-Invalid booking input
+7. Invalid booking input
 
-Invalid booking menu choice
+8. Invalid booking menu choice
 
-EV accepting a non-EV fallback
+9. EV accepting a non-EV fallback
 
-EV refusing a non-EV fallback
+10. EV refusing a non-EV fallback
 
-Parking-space release
+11. Parking-space release
 
-No parking space available
+12. No parking space available
 
-Parking ID format
+13. Parking ID format
+
 
 The final regression run passed all 13 tests.
 
-Example:
 
+### Example
+
+```text
 TEST RESULT
 ----------------------------------------
 Test passed
@@ -633,107 +685,117 @@ Actual overtime:   5 minutes
 
 Expected cost: Kr 145.00
 Actual cost:   Kr 145.00
+```
 
-Technologies
 
-Python
+## Technologies
 
-Object-Oriented Programming
+- Python
 
-JSON
+- Object-Oriented Programming
 
-File handling
+- JSON
 
-Datetime
+- File handling
 
-Exception handling
+- Datetime
 
-Input validation
+- Exception handling
 
-State management
+- Input validation
 
-Regression testing
+- State management
 
-Running the Application
+- Regression testing
+
+
+## Running the Application
 
 From the project directory:
 
+```bash
 python main.py
+```
+
 
 To run the regression tests:
 
+```bash
 python test_parking_cycle.py
+```
 
-Design Approach
+
+## Design Approach
 
 The application keeps the command-line interface separate from the business logic.
 
-main.py handles interaction with the user.
+`main.py` handles interaction with the user.
 
 The managers and domain classes handle the actual operations.
 
 For example:
 
+```text
 main.py
-↓
+    ↓
 "Start parking"
-↓
+    ↓
 ParkingManager.start_parking()
-↓
+    ↓
 Parking allocation rules
-↓
-
+    ↓
 ParkingSession
-
-↓
-
+    ↓
 ParkingSpace
-
-↓
-
+    ↓
 Data persistence
+```
+
 
 This prevents the main menu from becoming responsible for parking allocation, pricing, data storage, and session management at the same time.
 
-Key Implementation Areas
+
+## Key Implementation Areas
 
 The project brings several Python concepts together in one application:
 
-Classes and objects
+- Classes and objects
 
-Constructors
+- Constructors
 
-Instance methods
+- Instance methods
 
-Static methods
+- Static methods
 
-Encapsulation of state
+- Encapsulation of state
 
-Composition between classes
+- Composition between classes
 
-Separation of responsibilities
+- Separation of responsibilities
 
-List and dictionary operations
+- List and dictionary operations
 
-Set operations
+- Set operations
 
-File handling
+- File handling
 
-JSON serialization
+- JSON serialization
 
-Exception handling
+- Exception handling
 
-Date and time arithmetic
+- Date and time arithmetic
 
-Conditional business rules
+- Conditional business rules
 
-Searching and filtering
+- Searching and filtering
 
-Persistent application state
+- Persistent application state
 
-Regression testing
+- Regression testing
 
-Author
+
+## Author
 
 Rahul Rehman
+
 Python / OOP Portfolio Project
